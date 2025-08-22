@@ -1,0 +1,40 @@
+<launch>
+  <include file="$(find rplidar_ros)/launch/rplidar_a1.launch" />
+  <!-- Args -->
+  <arg name="map" default="$(find nav_stack)/maps/map.yaml"/>
+  <arg name="use_sim_time" default="false"/>
+
+  <!-- Load AMCL params from YAML -->
+  <rosparam file="$(find nav_stack)/config/amcl.yaml" command="load"/>
+
+  <!-- use_sim_time (if you run in simulation / bag, set true) -->
+  <param name="/use_sim_time" value="$(arg use_sim_time)"/>
+
+  <!-- Map server -->
+  <node pkg="map_server" type="map_server" name="map_server" output="screen" args="$(arg map)"/>
+
+  <!-- Run node_scan.py to filter lidar and publish /scan_data -->
+  <node pkg="crop_row_nav" type="node_scan.py" name="node_scan" output="screen" required="false">
+    <!-- node_scan subscribes to raw /scan and publishes /scan_data -->
+    <param name="scan_topic" value="/scan"/>
+    <param name="frame_id" value="laser"/>
+    <param name="min_range" value="0.1"/>
+    <param name="max_range" value="5.0"/>
+  </node>
+
+  <!-- Static TF: base_link -> laser -->
+  <node pkg="tf" type="static_transform_publisher" name="base_to_laser_broadcaster"
+        args="0 0 0 0 0 0 base_link laser 100"/>
+
+  <!-- AMCL node -->
+  <node pkg="amcl" type="amcl" name="amcl" output="screen">
+    <!-- Ensure frames and basic params (can be overridden by YAML) -->
+    <param name="odom_frame_id" value="odom"/>
+    <param name="base_frame_id" value="base_link"/>
+    <param name="global_frame_id" value="map"/>
+
+    <!-- Use the filtered scan topic produced by node_scan.py -->
+    <param name="scan_topic" value="/scan_data"/>
+    <remap from="scan" to="/scan_data"/>
+  </node>
+</launch>

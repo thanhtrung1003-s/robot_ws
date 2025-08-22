@@ -1,0 +1,10 @@
+<launch>
+
+  <!-- Load AMCL -->
+  <include file="$(find nav_stack)/launch/amcl.launch"/>
+
+  <!-- Move base -->
+  <include file="$(find nav_stack)/launch/move_base.launch"/>
+
+  <node name="rviz" pkg="rviz" type="rviz" />
+</launch>

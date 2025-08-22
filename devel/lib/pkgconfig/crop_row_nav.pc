@@ -1,0 +1,8 @@
+prefix=/home/chunnee/robot_ws/devel
+
+Name: crop_row_nav
+Description: Description of crop_row_nav
+Version: 0.0.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 

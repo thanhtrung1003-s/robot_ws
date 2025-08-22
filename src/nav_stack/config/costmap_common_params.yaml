@@ -1,0 +1,17 @@
+obstacle_range: 3.0
+raytrace_range: 3.5
+
+# Hình dáng robot (đổi cho đúng kích thước thật)
+footprint: [[-0.20, -0.20], [-0.20, 0.20], [0.20, 0.20], [0.20, -0.20]]
+
+inflation_radius: 0.45
+cost_scaling_factor: 5.0
+transform_tolerance: 1
+
+observation_sources: scan
+scan:
+  sensor_frame: laser
+  data_type: LaserScan
+  topic: /scan_data
+  marking: true
+  clearing: true
